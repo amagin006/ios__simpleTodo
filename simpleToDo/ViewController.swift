@@ -11,7 +11,13 @@ import UIKit
 class ViewController: UITableViewController {    
     private let cellId = "cell"
     
-    var todos = [String]()
+//    var todos = [String]()
+    var todos = [["run", "read book", "swim", "study", "push up", "buy food", "watch tv"],
+                 ["give", "have", "take", "go"],
+                 ["apple", "amazon", "google"]]
+    let sectionName = ["High", "Middle", "Low"]
+ 
+    var sections = [Dictionary<String, [String]>]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,13 +31,23 @@ class ViewController: UITableViewController {
         tableView.allowsSelectionDuringEditing = true
     }
     
+
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todos.count
+        return todos[section].count
+    }
+
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return sectionName.count
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return sectionName[section]
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NameCell
-        cell.nameLabel.text = todos[indexPath.row]
+        cell.nameLabel.text = todos[indexPath.section][indexPath.row]
         return cell
     }
     
@@ -59,7 +75,9 @@ extension ViewController {
         case .insert:
             print(".insert")
         case .delete:
-            print(".delete")
+            todos[indexPath.section].remove(at: indexPath.row)
+            print(todos)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
         case .none:
             print(".none")
         default:
@@ -69,20 +87,48 @@ extension ViewController {
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         
+//        let temp =
+        if sourceIndexPath.section == destinationIndexPath.section {
+            if sourceIndexPath.row < destinationIndexPath.row {
+                todos[destinationIndexPath.section].insert(todos[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row + 1)
+                todos[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+            } else {
+                todos[destinationIndexPath.section].insert(todos[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
+                todos[sourceIndexPath.section].remove(at: sourceIndexPath.row + 1)
+            }
+        } else {
+            todos[destinationIndexPath.section].insert(todos[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
+            todos[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+        }
+        print(todos)
+        
     }
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        
+        return true
+    }
+    
 }
 
 
 
 extension ViewController: AddTodoControllerDelegate {
-    func AddTodoCancel() {
-        
-    }
-    
-    func AddTodoDidFinish(_ todo: String) {
-        todos.append(todo)
+    func AddTodoDidFinish(_ todo: String, date: String, priorityLevel: String) {
+        print(priorityLevel)
+        var priorityInt = 0
+        if priorityLevel == "High" {
+            priorityInt = 0
+        } else if priorityLevel == "Middle" {
+            priorityInt = 1
+        } else if priorityLevel == "Low" {
+            priorityInt = 2
+        }
+        todos[priorityInt].append(todo)
         tableView.reloadData()
     }
     
-    
+    func AddTodoCancel() {
+        
+    }
 }
