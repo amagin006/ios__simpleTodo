@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		43227EE9227BB3C200708F43 /* AddTodoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43227EE8227BB3C200708F43 /* AddTodoViewController.swift */; };
+		43227EF4227E3B4C00708F43 /* UIView+Initializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43227EF3227E3B4C00708F43 /* UIView+Initializer.swift */; };
+		43227EF6227E423500708F43 /* EditDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43227EF5227E423500708F43 /* EditDetailViewController.swift */; };
 		436C5715227A506200316728 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436C5714227A506200316728 /* AppDelegate.swift */; };
 		436C5717227A506200316728 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436C5716227A506200316728 /* ViewController.swift */; };
 		436C571C227A506400316728 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436C571B227A506400316728 /* Assets.xcassets */; };
@@ -17,6 +19,8 @@
 
 /* Begin PBXFileReference section */
 		43227EE8227BB3C200708F43 /* AddTodoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTodoViewController.swift; sourceTree = "<group>"; };
+		43227EF3227E3B4C00708F43 /* UIView+Initializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Initializer.swift"; sourceTree = "<group>"; };
+		43227EF5227E423500708F43 /* EditDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDetailViewController.swift; sourceTree = "<group>"; };
 		436C5711227A506200316728 /* simpleToDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = simpleToDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		436C5714227A506200316728 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		436C5716227A506200316728 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -47,6 +51,14 @@
 			path = "suporting file";
 			sourceTree = "<group>";
 		};
+		43227EF2227E3AB900708F43 /* extension */ = {
+			isa = PBXGroup;
+			children = (
+				43227EF3227E3B4C00708F43 /* UIView+Initializer.swift */,
+			);
+			path = extension;
+			sourceTree = "<group>";
+		};
 		436C5708227A506200316728 = {
 			isa = PBXGroup;
 			children = (
@@ -68,9 +80,11 @@
 			children = (
 				436C5716227A506200316728 /* ViewController.swift */,
 				43227EE8227BB3C200708F43 /* AddTodoViewController.swift */,
+				43227EF5227E423500708F43 /* EditDetailViewController.swift */,
 				436C5728227AA71300316728 /* NameCell.swift */,
-				43227EE7227BB26E00708F43 /* suporting file */,
 				436C5720227A506400316728 /* Info.plist */,
+				43227EE7227BB26E00708F43 /* suporting file */,
+				43227EF2227E3AB900708F43 /* extension */,
 			);
 			path = simpleToDo;
 			sourceTree = "<group>";
@@ -145,10 +159,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43227EF6227E423500708F43 /* EditDetailViewController.swift in Sources */,
 				43227EE9227BB3C200708F43 /* AddTodoViewController.swift in Sources */,
 				436C5729227AA71300316728 /* NameCell.swift in Sources */,
 				436C5717227A506200316728 /* ViewController.swift in Sources */,
 				436C5715227A506200316728 /* AppDelegate.swift in Sources */,
+				43227EF4227E3B4C00708F43 /* UIView+Initializer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

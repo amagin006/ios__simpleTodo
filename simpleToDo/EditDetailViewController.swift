@@ -1,24 +1,25 @@
 //
-//  AddTodoViewController.swift
+//  EditDetailViewController.swift
 //  simpleToDo
 //
-//  Created by Shota Iwamoto on 2019-05-02.
+//  Created by Shota Iwamoto on 2019-05-04.
 //  Copyright © 2019 Shota Iwamoto. All rights reserved.
 //
 
 import UIKit
 
-protocol AddTodoControllerDelegate: class {
-    func AddTodoCancel()
-    func AddTodoDidFinish(_ todo: String, date: String, priorityLevel: Int)
+protocol EditDetailViewControllerDelegate: class {
+    func EditTodoDidFinish(_ todo: String, date: String, priority: Int, indexPath: IndexPath)
+    func EditTodoCancel()
 }
 
-class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class EditDetailViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
-    weak var delegate: AddTodoControllerDelegate?
+    weak var delegate: EditDetailViewControllerDelegate?
     let prioritySelect = ["High", "Middle", "Low"]
     var priorityNum = 0
-
+    var selectIndexPath = IndexPath.init()
+    
     let descriptionLabel = UILabel(title: "What do you have to do", color: .black, fontSize: 20, bold: true)
     let todoTextField = UITextField(width: 0, height: 0, fontSize: 30, placeHolder: "Enter your TODO")
     let deadlineTextField = UITextField(width: 160, height: 40, border: true, align: .right)
@@ -49,26 +50,17 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
         tb.sizeToFit()
         return tb
     }()
-
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = #colorLiteral(red: 0.9395442034, green: 0.7203364789, blue: 0.8146132371, alpha: 1)
         todoTextField.delegate = self
         priorityPicker.delegate = self
         
         setupUI()
         
-        navigationItem.title = "ADD TODO"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didAddTodo))
-    }
-    
-    @objc func didAddTodo() {
-        if let todo = todoTextField.text {
-            delegate?.AddTodoDidFinish(todo, date: deadlineTextField.text ?? "", priorityLevel: priorityNum)
-            navigationController?.popViewController(animated: true)
-        }
+        navigationItem.title = "Edit TODO"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(editDone))
     }
     
     @objc func doneClickToolbar() {
@@ -90,13 +82,19 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
         }
         priorityTextField.resignFirstResponder()
     }
-
+    
+    @objc func editDone() {
+        if let todo = todoTextField.text {
+            delegate?.EditTodoDidFinish(todo, date: deadlineTextField.text ?? "", priority: priorityNum, indexPath: selectIndexPath)
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         todoTextField.resignFirstResponder()
         priorityTextField.resignFirstResponder()
         return true
     }
-    
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
@@ -124,7 +122,7 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
         deadlineSV.translatesAutoresizingMaskIntoConstraints = false
         deadlineSV.axis = .horizontal
         deadlineSV.spacing = 10
-       
+        
         let prioritySV = UIStackView(arrangedSubviews: [priorityLabel, priorityTextField])
         prioritySV.axis = .horizontal
         prioritySV.translatesAutoresizingMaskIntoConstraints = false
@@ -149,7 +147,6 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
         toolbar.isUserInteractionEnabled = true
         deadlineTextField.inputView = datePicker
         deadlineTextField.inputAccessoryView = toolbar
-        
     }
     
     fileprivate func setPriorityPicker() {

@@ -16,12 +16,23 @@ class NameCell: UITableViewCell {
         return lb
     }()
     
+    let deallineLabel = UILabel(title: "May 12 2019", color: .black, fontSize: 16)
+    
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
-        addSubview(nameLabel)
+        
+        let stackView: UIStackView = {
+            let sv = UIStackView(arrangedSubviews: [nameLabel, deallineLabel])
+            sv.axis = .horizontal
+            sv.translatesAutoresizingMaskIntoConstraints = false
+            return sv
+        }()
+        addSubview(stackView)
         NSLayoutConstraint.activate([
-            nameLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            stackView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.7)
             ])
     }
     
