@@ -10,18 +10,6 @@ import UIKit
 
 class ViewController: UITableViewController {    
     private let cellId = "cell"
-    struct TodoItem {
-        var todo: String
-        var deadline: String
-        var priority: Int
-        
-        mutating func setTodo(todo: String, deadline: String, priority: Int) -> TodoItem {
-            self.todo = todo
-            self.deadline = deadline
-            self.priority = priority
-            return self
-        }
-    }
     
     let todo1 = TodoItem(todo: "run", deadline: "Dec 3 2019", priority: 1)
     let todo2 = TodoItem(todo: "read book", deadline: "Dec 3 2019", priority: 1)
@@ -46,14 +34,14 @@ class ViewController: UITableViewController {
         tableView.dataSource = self
         
         tableView.register(NameCell.self, forCellReuseIdentifier: cellId)
-        
+        self.title = "Todo List"
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTodo))
         tableView.allowsSelectionDuringEditing = true
     }
     
 
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todos[section].count
     }
@@ -62,9 +50,31 @@ class ViewController: UITableViewController {
         return sectionName.count
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionName[section]
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        let header = UILabel()
+        header.text = sectionName[section]
+        header.font = UIFont(descriptor: .init(), size: 22)
+        if section == 0 {
+            headerView.backgroundColor = #colorLiteral(red: 1, green: 0.6755259189, blue: 0.07688719753, alpha: 1)
+        } else if section == 1 {
+            headerView.backgroundColor = #colorLiteral(red: 0.4398253267, green: 1, blue: 0.6652365285, alpha: 1)
+        } else if section == 2 {
+            headerView.backgroundColor = #colorLiteral(red: 0.4579046029, green: 0.6709440624, blue: 1, alpha: 1)
+        }
+        headerView.addSubview(header)
+        header.translatesAutoresizingMaskIntoConstraints = false
+        header.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: 20).isActive = true
+        header.widthAnchor.constraint(equalTo: headerView.widthAnchor).isActive = true
+        header.heightAnchor.constraint(equalTo: headerView.heightAnchor).isActive = true
+        header.topAnchor.constraint(equalTo: headerView.topAnchor).isActive = true
+
+        return headerView
     }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
+    }
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NameCell
@@ -72,6 +82,7 @@ class ViewController: UITableViewController {
         cell.deallineLabel.text = todos[indexPath.section][indexPath.row].deadline
         return cell
     }
+    
     
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)

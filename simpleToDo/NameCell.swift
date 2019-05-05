@@ -17,14 +17,16 @@ class NameCell: UITableViewCell {
     }()
     
     let deallineLabel = UILabel(title: "May 12 2019", color: .black, fontSize: 16)
+    let dueLabel = UILabel(title: "Due Date", color: #colorLiteral(red: 1, green: 0.4749273103, blue: 0, alpha: 1), fontSize: 8)
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         
         let stackView: UIStackView = {
-            let sv = UIStackView(arrangedSubviews: [nameLabel, deallineLabel])
+            let sv = UIStackView(arrangedSubviews: [nameLabel, dueLabel, deallineLabel])
             sv.axis = .horizontal
+            sv.spacing = 15
             sv.translatesAutoresizingMaskIntoConstraints = false
             return sv
         }()

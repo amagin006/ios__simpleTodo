@@ -8,6 +8,19 @@
 
 import UIKit
 
+struct TodoItem {
+    var todo: String
+    var deadline: String
+    var priority: Int
+    
+    mutating func setTodo(todo: String, deadline: String, priority: Int) -> TodoItem {
+        self.todo = todo
+        self.deadline = deadline
+        self.priority = priority
+        return self
+    }
+}
+
 extension UILabel {
     convenience init(title: String, color: UIColor, fontSize: CGFloat, bold: Bool = false) {
         self.init(frame: .zero)
