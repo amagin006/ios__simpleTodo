@@ -15,6 +15,8 @@
 		436C571C227A506400316728 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436C571B227A506400316728 /* Assets.xcassets */; };
 		436C571F227A506400316728 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 436C571D227A506400316728 /* LaunchScreen.storyboard */; };
 		436C5729227AA71300316728 /* NameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436C5728227AA71300316728 /* NameCell.swift */; };
+		43C52C00228CD67800292E42 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C52BFF228CD67800292E42 /* CoreDataManager.swift */; };
+		43C52C03228CD7A000292E42 /* simpleTodo.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 43C52C01228CD7A000292E42 /* simpleTodo.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		436C571E227A506400316728 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		436C5720227A506400316728 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		436C5728227AA71300316728 /* NameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCell.swift; sourceTree = "<group>"; };
+		43C52BFF228CD67800292E42 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		43C52C02228CD7A000292E42 /* simpleTodo.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = simpleTodo.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,8 @@
 				436C5720227A506400316728 /* Info.plist */,
 				43227EE7227BB26E00708F43 /* suporting file */,
 				43227EF2227E3AB900708F43 /* extension */,
+				43C52BFF228CD67800292E42 /* CoreDataManager.swift */,
+				43C52C01228CD7A000292E42 /* simpleTodo.xcdatamodeld */,
 			);
 			path = simpleToDo;
 			sourceTree = "<group>";
@@ -164,7 +170,9 @@
 				436C5729227AA71300316728 /* NameCell.swift in Sources */,
 				436C5717227A506200316728 /* ViewController.swift in Sources */,
 				436C5715227A506200316728 /* AppDelegate.swift in Sources */,
+				43C52C00228CD67800292E42 /* CoreDataManager.swift in Sources */,
 				43227EF4227E3B4C00708F43 /* UIView+Initializer.swift in Sources */,
+				43C52C03228CD7A000292E42 /* simpleTodo.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +364,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		43C52C01228CD7A000292E42 /* simpleTodo.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				43C52C02228CD7A000292E42 /* simpleTodo.xcdatamodel */,
+			);
+			currentVersion = 43C52C02228CD7A000292E42 /* simpleTodo.xcdatamodel */;
+			path = simpleTodo.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 436C5709227A506200316728 /* Project object */;
 }
