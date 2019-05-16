@@ -7,25 +7,29 @@
 //
 
 import UIKit
+import CoreData
+
 
 class ViewController: UITableViewController {    
     private let cellId = "cell"
     
-    let todo1 = TodoItem(todo: "run", deadline: "Dec 3 2019", priority: 1)
-    let todo2 = TodoItem(todo: "read book", deadline: "Dec 3 2019", priority: 1)
-    let todo3 = TodoItem(todo: "swim", deadline: "Dec 3 2019", priority: 1)
-    let todo4 = TodoItem(todo: "study", deadline: "Dec 3 2019", priority: 1)
-    let todo5 = TodoItem(todo: "push up", deadline: "Dec 3 2019", priority: 1)
-    let todo6 = TodoItem(todo: "buy food", deadline: "Dec 3 2019", priority: 1)
-    let todo7 = TodoItem(todo: "watch tv", deadline: "Dec 3 2019", priority: 2)
-    let todo8 = TodoItem(todo: "give", deadline: "Dec 3 2019", priority: 2)
-    let todo9 = TodoItem(todo:  "take", deadline: "Dec 3 2019", priority: 2)
-    let todo10 = TodoItem(todo: "go", deadline: "Dec 3 2019", priority: 2)
-    let todo11 = TodoItem(todo: "apple", deadline: "Dec 3 2019", priority: 3)
-    let todo12 = TodoItem(todo: "amazon", deadline: "Dec 3 2019", priority: 3)
-    let todo13 = TodoItem(todo: "google", deadline: "Dec 3 2019", priority: 3)
+//    let todo1 = TodoItem(todo: "run", deadline: "Dec 3 2019", priority: 1)
+//    let todo2 = TodoItem(todo: "read book", deadline: "Dec 3 2019", priority: 1)
+//    let todo3 = TodoItem(todo: "swim", deadline: "Dec 3 2019", priority: 1)
+//    let todo4 = TodoItem(todo: "study", deadline: "Dec 3 2019", priority: 1)
+//    let todo5 = TodoItem(todo: "push up", deadline: "Dec 3 2019", priority: 1)
+//    let todo6 = TodoItem(todo: "buy food", deadline: "Dec 3 2019", priority: 1)
+//    let todo7 = TodoItem(todo: "watch tv", deadline: "Dec 3 2019", priority: 2)
+//    let todo8 = TodoItem(todo: "give", deadline: "Dec 3 2019", priority: 2)
+//    let todo9 = TodoItem(todo:  "take", deadline: "Dec 3 2019", priority: 2)
+//    let todo10 = TodoItem(todo: "go", deadline: "Dec 3 2019", priority: 2)
+//    let todo11 = TodoItem(todo: "apple", deadline: "Dec 3 2019", priority: 3)
+//    let todo12 = TodoItem(todo: "amazon", deadline: "Dec 3 2019", priority: 3)
+//    let todo13 = TodoItem(todo: "google", deadline: "Dec 3 2019", priority: 3)
+//
+//    lazy var todos = [[todo1, todo2, todo3, todo4, todo5, todo6], [todo7, todo8, todo9, todo10], [todo11, todo12, todo13]]
     
-    lazy var todos = [[todo1, todo2, todo3, todo4, todo5, todo6], [todo7, todo8, todo9, todo10], [todo11, todo12, todo13]]
+    var todoTasksArr:[[TodoTask]] = [[], [], []]
     let sectionName = ["High", "Middle", "Low"]
     
     override func viewDidLoad() {
@@ -39,11 +43,31 @@ class ViewController: UITableViewController {
         navigationItem.leftBarButtonItem = editButtonItem
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTodo))
         tableView.allowsSelectionDuringEditing = true
+        
+        fetchTodo()
+    }
+    
+    private func fetchTodo() {
+        let manageContext = CoreDataManager.shared.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<TodoTask>(entityName: "TodoTask")
+        do {
+            let fetchTodoTasks = try manageContext.fetch(fetchRequest)
+            
+            self.todoTasksArr[0] = fetchTodoTasks.filter({$0.priority == 0})
+            self.todoTasksArr[1] = fetchTodoTasks.filter({$0.priority == 1})
+            self.todoTasksArr[2] = fetchTodoTasks.filter({$0.priority == 2})
+            self.tableView.reloadData()
+            
+        } catch let err {
+            print("Failed to fetch todoTasks: \(err)")
+        }
+        
+        
     }
     
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todos[section].count
+        return todoTasksArr[section].count
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -78,8 +102,14 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! NameCell
-        cell.nameLabel.text = todos[indexPath.section][indexPath.row].todo
-        cell.deallineLabel.text = todos[indexPath.section][indexPath.row].deadline
+        
+        let todoTask = todoTasksArr[indexPath.section][indexPath.row]
+        
+        if let todo = todoTask.todo, let deadline = todoTask.deadline {
+            cell.nameLabel.text = todo
+            cell.deallineLabel.text = deadline
+        }
+        
         return cell
     }
     
@@ -101,14 +131,19 @@ extension ViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let editDtailVC = EditDetailViewController()
-        editDtailVC.delegate = self
-        editDtailVC.selectIndexPath = indexPath
-        editDtailVC.todoTextField.text = todos[indexPath.section][indexPath.row].todo
-        editDtailVC.deadlineTextField.text = todos[indexPath.section][indexPath.row].deadline
-        editDtailVC.priorityTextField.text = sectionName[indexPath.section]
-        editDtailVC.priorityNum = indexPath.section
-        navigationController?.pushViewController(editDtailVC, animated: true)
+        let editDetailVC = AddTodoViewController()
+        editDetailVC.delegate = self
+        editDetailVC.todoTask = self.todoTasksArr[indexPath.section][indexPath.row]
+        navigationController?.pushViewController(editDetailVC, animated: true)
+//
+//        let editDtailVC = EditDetailViewController()
+//        editDtailVC.delegate = self
+//        editDtailVC.selectIndexPath = indexPath
+//        editDtailVC.todoTextField.text = todos[indexPath.section][indexPath.row].todo
+//        editDtailVC.deadlineTextField.text = todos[indexPath.section][indexPath.row].deadline
+//        editDtailVC.priorityTextField.text = sectionName[indexPath.section]
+//        editDtailVC.priorityNum = indexPath.section
+//        navigationController?.pushViewController(editDtailVC, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -116,9 +151,9 @@ extension ViewController {
         case .insert:
             print(".insert")
         case .delete:
-            todos[indexPath.section].remove(at: indexPath.row)
-            print(todos)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
+//            todos[indexPath.section].remove(at: indexPath.row)
+//            tableView.deleteRows(at: [indexPath], with: .automatic)
+            print(".delete")
         case .none:
             print(".none")
         default:
@@ -130,15 +165,18 @@ extension ViewController {
     
         if sourceIndexPath.section == destinationIndexPath.section {
             if sourceIndexPath.row < destinationIndexPath.row {
-                todos[destinationIndexPath.section].insert(todos[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row + 1)
-                todos[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+            todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row + 1)
+                todoTasksArr[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+                print("----\(todoTasksArr)")
             } else {
-                todos[destinationIndexPath.section].insert(todos[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
-                todos[sourceIndexPath.section].remove(at: sourceIndexPath.row + 1)
+                todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
+                todoTasksArr[sourceIndexPath.section].remove(at: sourceIndexPath.row + 1)
+                print("++++++\(todoTasksArr)")
             }
         } else {
-            todos[destinationIndexPath.section].insert(todos[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
-            todos[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+            todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
+            todoTasksArr[sourceIndexPath.section].remove(at: sourceIndexPath.row)
+            print("====\(todoTasksArr)")
         }
     }
     
@@ -148,28 +186,28 @@ extension ViewController {
 }
 
 extension ViewController: AddTodoControllerDelegate {
-    func AddTodoDidFinish(_ todo: String, date: String, priorityLevel: Int) {
-        let newTodo = TodoItem(todo: todo, deadline: date, priority: priorityLevel)
-        todos[priorityLevel].append(newTodo)
-        tableView.reloadData()
+    func AddTodoDidFinish(todoTask: TodoTask) {
+        todoTasksArr[Int(todoTask.priority)].append(todoTask)
+        let insertPath = IndexPath(row: todoTasksArr[Int(todoTask.priority)].count - 1, section: Int(todoTask.priority))
+        tableView.insertRows(at: [insertPath], with: .automatic)
     }
     
-    func AddTodoCancel() {
+    func EditTodoDidFinish(editTask: TodoTask, section: Int) {
+        if Int(editTask.priority) == section {
+            let row = todoTasksArr[Int(editTask.priority)].firstIndex(of: editTask)!
+            tableView.reloadRows(at: [IndexPath(row: row, section: Int(editTask.priority))], with: .middle)
+        } else {
+            let row = todoTasksArr[section].firstIndex(of: editTask)!
+            todoTasksArr[section].remove(at: row)
+            tableView.deleteRows(at: [IndexPath(row: row, section: section)], with: .automatic)
+            
+            todoTasksArr[Int(editTask.priority)].append(editTask)
+            let indexpath = IndexPath(row: todoTasksArr[Int(editTask.priority)].count - 1, section: Int(editTask.priority))
+            tableView.insertRows(at: [indexpath], with: .middle)
+        }
+        
         
     }
+    
 }
 
-extension ViewController: EditDetailViewControllerDelegate {
-    func EditTodoCancel() {
-        
-    }
-    func EditTodoDidFinish(_ todo: String, date: String, priority: Int, indexPath: IndexPath) {
-        let editTodo = todos[indexPath.section][indexPath.row].setTodo(todo: todo, deadline: date, priority: priority)
-        if editTodo.priority != indexPath.section {
-            todos[indexPath.section].remove(at: indexPath.row)
-            todos[priority].append(editTodo)
-        }
-        tableView.reloadData()
-    }
-    
-}

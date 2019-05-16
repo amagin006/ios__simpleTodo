@@ -7,17 +7,32 @@
 //
 
 import UIKit
+import CoreData
 
 protocol AddTodoControllerDelegate: class {
-    func AddTodoCancel()
-    func AddTodoDidFinish(_ todo: String, date: String, priorityLevel: Int)
+    func AddTodoDidFinish(todoTask: TodoTask)
+    func EditTodoDidFinish(editTask: TodoTask, section: Int)
 }
 
 class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
-
+    
     weak var delegate: AddTodoControllerDelegate?
+    
+    var todoTask: TodoTask? {        didSet {
+            todoTextField.text = todoTask?.todo
+            guard let deadline = todoTask?.deadline else { return }
+            deadlineTextField.text = deadline
+            guard let priority = todoTask?.priority else { return }
+            priorityNum = priority
+            beforeEditPriorityNum = priority
+            priorityTextField.text = prioritySelect[Int(priority)]
+
+        }
+    }
+    
     let prioritySelect = ["High", "Middle", "Low"]
-    var priorityNum = 0
+    var priorityNum:Int16 = 0
+    var beforeEditPriorityNum: Int16 = 0
 
     let descriptionLabel = UILabel(title: "What do you have to do", color: .black, fontSize: 20, bold: true)
     let todoTextField = UITextField(width: 0, height: 0, fontSize: 30, placeHolder: "Enter your TODO")
@@ -65,10 +80,26 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
     }
     
     @objc func didAddTodo() {
-        if let todo = todoTextField.text {
-            delegate?.AddTodoDidFinish(todo, date: deadlineTextField.text ?? "", priorityLevel: priorityNum)
+        let manageContext = CoreDataManager.shared.persistentContainer.viewContext
+        if todoTask == nil {
+            let newTodoTask = NSEntityDescription.insertNewObject(forEntityName: "TodoTask", into: manageContext)
+            newTodoTask.setValue(todoTextField.text, forKey: "todo")
+            newTodoTask.setValue(deadlineTextField.text, forKey: "deadline")
+            newTodoTask.setValue(priorityNum, forKey: "priority")
+            
+            CoreDataManager.shared.saveContext()
+            self.delegate?.AddTodoDidFinish(todoTask: newTodoTask as! TodoTask)
+            navigationController?.popViewController(animated: true)
+            
+        } else {
+            todoTask?.todo = todoTextField.text
+            todoTask?.deadline = deadlineTextField.text
+            todoTask?.priority = priorityNum
+            
+            self.delegate?.EditTodoDidFinish(editTask: self.todoTask!, section: Int(self.beforeEditPriorityNum))
             navigationController?.popViewController(animated: true)
         }
+        
     }
     
     @objc func doneClickToolbar() {
@@ -111,7 +142,7 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        priorityNum = row
+        priorityNum = Int16(row)
         priorityTextField.text = prioritySelect[row]
     }
     
