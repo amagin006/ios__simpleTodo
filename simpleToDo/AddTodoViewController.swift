@@ -96,6 +96,7 @@ class AddTodoViewController: UIViewController, UITextFieldDelegate, UIPickerView
             todoTask?.deadline = deadlineTextField.text
             todoTask?.priority = priorityNum
             
+            CoreDataManager.shared.saveContext()
             self.delegate?.EditTodoDidFinish(editTask: self.todoTask!, section: Int(self.beforeEditPriorityNum))
             navigationController?.popViewController(animated: true)
         }

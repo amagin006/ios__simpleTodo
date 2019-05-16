@@ -146,37 +146,74 @@ extension ViewController {
 //        navigationController?.pushViewController(editDtailVC, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        switch editingStyle {
-        case .insert:
-            print(".insert")
-        case .delete:
-//            todos[indexPath.section].remove(at: indexPath.row)
-//            tableView.deleteRows(at: [indexPath], with: .automatic)
-            print(".delete")
-        case .none:
-            print(".none")
-        default:
-            break
-        }
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        switch editingStyle {
+//        case .insert:
+//            print(".insert")
+//        case .delete:
+////            todos[indexPath.section].remove(at: indexPath.row)
+////            tableView.deleteRows(at: [indexPath], with: .automatic)
+//            print(".delete")
+//        case .none:
+//            print(".none")
+//        default:
+//            break
+//        }
+//    }
+//
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let deleteAction = UITableViewRowAction(style: .destructive, title: "delete", handler: {
+            (action, indexpath) in
+            
+            let todoTask = self.todoTasksArr[indexpath.section][indexpath.row]
+            self.todoTasksArr[indexpath.section].remove(at: indexpath.row)
+            self.tableView.deleteRows(at: [indexpath], with: .automatic)
+            
+            let manageContext = CoreDataManager.shared.persistentContainer.viewContext
+            manageContext.delete(todoTask)
+            CoreDataManager.shared.persistentContainer.viewContext.delete(todoTask)
+            CoreDataManager.shared.saveContext()
+            
+            })
+        
+        let editAction = UITableViewRowAction(style: .normal, title: "edit", handler: {
+            (action, indexPath) in
+            
+            let editVC = AddTodoViewController()
+            editVC.delegate = self
+            editVC.todoTask = self.todoTasksArr[indexPath.section][indexPath.row]
+            
+            self.navigationController?.pushViewController(editVC, animated: true)
+        })
+        
+        return [deleteAction, editAction]
+        
     }
     
+    
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        
     
         if sourceIndexPath.section == destinationIndexPath.section {
             if sourceIndexPath.row < destinationIndexPath.row {
-            todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row + 1)
+           
+                todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row + 1)
                 todoTasksArr[sourceIndexPath.section].remove(at: sourceIndexPath.row)
-                print("----\(todoTasksArr)")
+                
             } else {
                 todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
                 todoTasksArr[sourceIndexPath.section].remove(at: sourceIndexPath.row + 1)
-                print("++++++\(todoTasksArr)")
+                
             }
         } else {
+           
+            todoTasksArr[sourceIndexPath.section][sourceIndexPath.row].priority = Int16(destinationIndexPath.section)
             todoTasksArr[destinationIndexPath.section].insert(todoTasksArr[sourceIndexPath.section][sourceIndexPath.row], at: destinationIndexPath.row)
             todoTasksArr[sourceIndexPath.section].remove(at: sourceIndexPath.row)
-            print("====\(todoTasksArr)")
+            
+            CoreDataManager.shared.saveContext()
         }
     }
     
